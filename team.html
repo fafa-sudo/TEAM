@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            border: 5px solid #FF69B4;
+        }
+
+        h1 {
+            background-color: #6633CC;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid gray;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #E6E6E6;
+        }
+
+        .inputContainer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="date"],
+        button {
+            padding: 10px;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .actionCol {
+            width: 150px;
+            text-align: center;
+        }
+
+        .deleteButton,
+        .editButton,
+        .addButton {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 8px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .addButton {
+            background-color: #28a745;
+        }
+
+        .editButton {
+            background-color: #ffc107;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover {
+            color: black;
+            cursor: pointer;
+        }
+
+        #commentView {
+            background-color: #FFFF99;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .duty-status {
+            background-color: rgb(105, 197, 243);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .current-date,
+        .selected-date {
+            border-radius: 5px;
+            color: rgb(88, 13, 218);
+        }
+        
+        .selected-date {
+            background-color: rgb(9, 181, 75);
+            padding: 5px;
+        }
+
+        .current-date {
+            background-color: rgb(174, 215, 25);
+            padding: 5px;
+        }
+
+        .on-duty {
+            background-color: yellow;
+            padding: 5px;
+            border-radius: 5px;
+            color: black;
+        }
+
+        .off-duty {
+            background-color: green;
+            padding: 5px;
+            border-radius: 5px;
+            color: white;
+        }
+        .calculateButt {
+            background-color: green;  /* Background color for button */
+            color: white;             /* Text color */
+            border: none;             /* No border */
+            border-radius: 5px;      /* Rounded corners */
+            padding: 10px;           /* Padding */
+            cursor: pointer;          /* Cursor style */
+            display: flex;            /* Align items horizontally */
+            align-items: center;      /* Center items vertically */
+            font-weight: bold; /* Bold text */
+        }
+
+        .button-icon {
+            margin-right: 5px;       /* Space between icon and text */
+            font-size: 1.2em;        /* Icon size */
+            font-weight: bold; /* Bold text */
+        }
+
+        .calculateButt:hover {
+            background-color: darkgreen; /* Darker shade on hover */
+        }
+
+        .duty-label {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        .gray-label {
+            color: rgb(17, 21, 233);
+            background-color: rgba(24, 25, 25, 0.381);
+            font-size: 30px; /* Example font size */
+        }
+        .selecteddate {
+            color: black; /* Text color */
+            background-color: rgba(17, 166, 230, 0.381); /* Background color */
+            font-size: 30px; /* Example font size */
+            font-weight: bold; /* Bold text */
+            padding: 10px; /* Optional padding for better appearance */
+            border-radius: 5px; /* Optional rounded corners */
+        }
+        .admin-section {
+            background-color: rgba(62, 65, 65, 0.381);
+            padding: 10px;
+            border-radius: 10px;
+            color: rgb(5, 3, 11);
+            margin: 20px 0;
+        }
+
+        .operators-section {
+            background-color: rgb(232, 236, 238);
+            padding: 10px;
+            border-radius: 10px;
+            color: rgba(6, 6, 6, 0.929);
+            margin: 20px 0;
+        }
+        .dutystatus {
+            background-color: rgb(212, 244, 172);
+            padding: 15px;
+            border-radius: 10px;
+            color: rgb(5, 3, 11);
+            margin: 30px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="loginHeader">Login Team's Members <i class="fas fa-sign-in-alt"></i></h1>
+
+    <div id="loginDiv">
+        <div class="inputContainer">
+            <input type="text" id="username" placeholder="Username" />
+            <input type="password" id="password" placeholder="Password" />
+            <button type="button" id="loginButton"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </div>
+        <p id="loginMessage" class="errorMessage"></p>
+    </div>
+
+    <div id="tablesDiv" style="display: none;">
+        <!-- Operators Section -->
+        <div class="operators-section">
+            <h1>Operators' Team Members</h1>
+            <div id="teamSections">
+                <h2>Team A1</h2>
+                <div class="inputContainer" id="teamA1Inputs">
+                    <input type="text" id="teamA1Rank" placeholder="Rank" />
+                    <input type="text" id="teamA1FirstName" placeholder="First Name" />
+                    <input type="text" id="teamA1LastName" placeholder="Last Name" />
+                    <input type="text" id="teamA1Remark" placeholder="Remark" />
+                    <input type="text" id="teamA1Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeamA1Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeamA1">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeamA1"></tbody>
+                </table>
+
+                <h2>Team A2</h2>
+                <div class="inputContainer" id="teamA2Inputs">
+                    <input type="text" id="teamA2Rank" placeholder="Rank" />
+                    <input type="text" id="teamA2FirstName" placeholder="First Name" />
+                    <input type="text" id="teamA2LastName" placeholder="Last Name" />
+                    <input type="text" id="teamA2Remark" placeholder="Remark" />
+                    <input type="text" id="teamA2Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeamA2Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeamA2">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeamA2"></tbody>
+                </table>
+
+                <h2>Team B1</h2>
+                <div class="inputContainer" id="teamB1Inputs">
+                    <input type="text" id="teamB1Rank" placeholder="Rank" />
+                    <input type="text" id="teamB1FirstName" placeholder="First Name" />
+                    <input type="text" id="teamB1LastName" placeholder="Last Name" />
+                    <input type="text" id="teamB1Remark" placeholder="Remark" />
+                    <input type="text" id="teamB1Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeamB1Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeamB1">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeamB1"></tbody>
+                </table>
+
+                <h2>Team B2</h2>
+                <div class="inputContainer" id="teamB2Inputs">
+                    <input type="text" id="teamB2Rank" placeholder="Rank" />
+                    <input type="text" id="teamB2FirstName" placeholder="First Name" />
+                    <input type="text" id="teamB2LastName" placeholder="Last Name" />
+                    <input type="text" id="teamB2Remark" placeholder="Remark" />
+                    <input type="text" id="teamB2Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeamB2Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeamB2">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeamB2"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Administration Section -->
+        <div class="admin-section" id="adminSection">
+            <h1>Administration Team Members</h1>
+            <div id="adminTeamSections">
+                <h2>Team 1</h2>
+                <div class="inputContainer" id="team1Inputs">
+                    <input type="text" id="team1Rank" placeholder="Rank" />
+                    <input type="text" id="team1FirstName" placeholder="First Name" />
+                    <input type="text" id="team1LastName" placeholder="Last Name" />
+                    <input type="text" id="team1Remark" placeholder="Remark" />
+                    <input type="text" id="team1Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeam1Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeam1">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeam1"></tbody>
+                </table>
+
+                <h2>Team 2</h2>
+                <div class="inputContainer" id="team2Inputs">
+                    <input type="text" id="team2Rank" placeholder="Rank" />
+                    <input type="text" id="team2FirstName" placeholder="First Name" />
+                    <input type="text" id="team2LastName" placeholder="Last Name" />
+                    <input type="text" id="team2Remark" placeholder="Remark" />
+                    <input type="text" id="team2Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeam2Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeam2">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeam2"></tbody>
+                </table>
+
+                <h2>Team 3</h2>
+                <div class="inputContainer" id="team3Inputs">
+                    <input type="text" id="team3Rank" placeholder="Rank" />
+                    <input type="text" id="team3FirstName" placeholder="First Name" />
+                    <input type="text" id="team3LastName" placeholder="Last Name" />
+                    <input type="text" id="team3Remark" placeholder="Remark" />
+                    <input type="text" id="team3Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeam3Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeam3">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeam3"></tbody>
+                </table>
+
+                <h2>Team 4</h2>
+                <div class="inputContainer" id="team4Inputs">
+                    <input type="text" id="team4Rank" placeholder="Rank" />
+                    <input type="text" id="team4FirstName" placeholder="First Name" />
+                    <input type="text" id="team4LastName" placeholder="Last Name" />
+                    <input type="text" id="team4Remark" placeholder="Remark" />
+                    <input type="text" id="team4Comment" placeholder="Comment" />
+                    <button class="addButton" id="addTeam4Btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <table id="tableTeam4">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Rank</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Remark</th>
+                            <th>Comment</th>
+                            <th class="actionCol">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTeam4"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Edit Modal for Members -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeEditModal">×</span>
+                <h2>Edit Member</h2>
+                <input type="text" id="editRank" placeholder="Rank" />
+                <input type="text" id="editFirstName" placeholder="First Name" />
+                <input type="text" id="editLastName" placeholder="Last Name" />
+                <input type="text" id="editRemark" placeholder="Remark" />
+                <input type="text" id="editComment" placeholder="Comment" />
+                <button id="saveEditBtn">Update</button>
+            </div>
+        </div>
+
+        <!-- Weekly Duty Management Section -->
+        <h1>WEEKLY <strong>TIME TABLE</strong> TEAMS ON DUTY</h1>
+        <div class="inputContainer" id="dutyInputContainer">
+            <input type="text" id="weekDay" placeholder="Week Day" />
+            <input type="date" id="date" />
+            <input type="text" id="dayShift" placeholder="Day Shift" />
+            <input type="text" id="nightShift" placeholder="Night Shift" />
+            <input type="text" id="offDuty" placeholder="Off Duty" />
+            <button type="button" id="addDutyBtn" class="addButton"><i class="fas fa-plus"></i> Add</button>
+        </div>
+        <table id="dutyTable">
+            <thead>
+                <tr>
+                    <th>S/No</th>
+                    <th>Week Day</th>
+                    <th>Date</th>
+                    <th>Day Shift</th>
+                    <th>Night Shift</th>
+                    <th>Off Duty</th>
+                    <th class="actionCol" style="display: none;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="dutyList"></tbody>
+        </table>
+
+        <!-- Comment View -->
+        <div id="commentView">
+            <h1>Comment</h1>
+            <div class="inputContainer" id="commentInputContainer">
+                <input type="text" id="comment" placeholder="Enter your comment" />
+                <input type="text" id="writtenBy" placeholder="Written By" />
+                <button type="button" id="addCommentBtn" class="addButton"><i class="fas fa-plus"></i> Add Comment</button>
+            </div>
+            <table id="commentTable">
+                <thead>
+                    <tr>
+                        <th>S/No</th>
+                        <th>Comment</th>
+                        <th>Written By</th>
+                        <th class="actionCol" style="display: none;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="commentList"></tbody>
+            </table>
+
+            <!-- Edit Modal for Comments -->
+            <div id="editCommentModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closeCommentEditModal">×</span>
+                    <h2>Edit Comment</h2>
+                    <input type="text" id="editComment" placeholder="Comment" />
+                    <input type="text" id="editWrittenBy" placeholder="Written By" />
+                    <button id="saveCommentEditBtn">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duty Status Section -->
+        <h1>Duty Status</h1>
+        <div class="dutystatus">
+        </label><label for="dateInput">Select a date:</label>
+        <input type="date" id="dateInput" />
+        <br> <br>
+        <button type="button" onclick="calculateDayOfWeek()">
+            <i class="fas fa-calculator button-icon" id="calculateButt"></i> CALCULATE</button>
+        <br><br>
+        <div id="currentDateLabel" class="gray-label"></div>
+        <div id="result" class="selecteddate"></div>
+        </div>
+
+        <script>
+            // Display the current date
+            function displayCurrentDate() {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const today = new Date();
+                const formattedDate = today.toLocaleDateString(undefined, options);
+                document.getElementById("currentDateLabel").innerText = `Today's date is on the  ${formattedDate}`;
+            }
+
+            function calculateDayOfWeek() {
+                const inputDate = document.getElementById("dateInput").value;
+                const parsedDate = new Date(inputDate);
+
+                if (!isNaN(parsedDate)) {
+                    const dayOfWeek = parsedDate.toLocaleDateString(undefined, { weekday: 'long' });
+                    const dutyStatus = getDutyStatus(parsedDate);
+                    document.getElementById("result").innerHTML = `<br>
+                        <span class="blue-text">The selected date: <strong class="selected-date">${inputDate}</strong> (${dayOfWeek})</span><br><br>
+                       ${dutyStatus}`;
+                } else {
+                    document.getElementById("result").innerHTML = "Invalid date.";
+                }
+            }
+
+            function getGroupStatus(dayIndex, groupName) {
+                let groupStatusHTML = `<br><br>`;
+                if (dayIndex === 0 || dayIndex === 2) {
+                    groupStatusHTML += `<label class="duty-label off-duty">${groupName}1: Off duty</label><br><br>
+                                        <label class="duty-label off-duty">${groupName}2: Off duty</label><br><br>`;
+                } else if (dayIndex === 1) {
+                    groupStatusHTML += `<label class="duty-label on-duty">${groupName}1: On duty during the Day</label><br><br>
+                                        <label class="duty-label on-duty">${groupName}2: On duty during the Night</label><br><br>`;
+                } else if (dayIndex === 3) {
+                    groupStatusHTML += `<label class="duty-label on-duty">${groupName}1: On duty during the Night</label><br><br>
+                                        <label class="duty-label on-duty">${groupName}2: On duty during the Day</label><br><br>`;
+                }
+                return groupStatusHTML;
+            }
+
+            function getDutyStatus(date) {
+                const startDate1 = new Date(2024, 1, 13); // TEAM A starts duty
+                const startDate2 = new Date(2024, 1, 14); // TEAM B starts duty
+
+                const difference1 = date - startDate1;
+                const difference2 = date - startDate2;
+
+                const daysDifference1 = Math.floor(difference1 / (1000 * 60 * 60 * 24));
+                const daysDifference2 = Math.floor(difference2 / (1000 * 60 * 60 * 24));
+
+                const cycleLength = 4; // Number of days in the duty cycle
+                const dayIndex1 = daysDifference1 % cycleLength;
+                const dayIndex2 = daysDifference2 % cycleLength;
+
+                const TEAMAStatus = getGroupStatus(dayIndex1, "TEAM A");
+                const TEAMBStatus = getGroupStatus(dayIndex2, "TEAM B");
+
+                return `${TEAMAStatus}<br>${TEAMBStatus}`;
+            }
+
+            // Call the function to display the current date on page load
+            displayCurrentDate();
+        </script>
+
+    </div>
+    <!-- Add restricted header -->
+    <header id="restrictedHeader" style="display: none;">
+        <h1 style="text-align: center; color: red;">RESTRICTED</h1>
+    </header>
+
+    <!-- Add restricted footer -->
+    <footer id="restrictedFooter" style="display: none;">
+        <p style="text-align: center; color: red;">RESTRICTED</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            onSnapshot,
+            deleteDoc,
+            doc,
+            updateDoc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbm1ApKMcu9Q8HwJwKqROgBNndtr1Vl_8",
+            authDomain: "tstdb-8e676.firebaseapp.com",
+            databaseURL: "https://tstdb-8e676-default-rtdb.firebaseio.com",
+            projectId: "tstdb-8e676",
+            storageBucket: "tstdb-8e676.appspot.com",
+            messagingSenderId: "995214869280",
+            appId: "1:995214869280:web:58ce365c970bd53300cd45"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let currentEditId = '';
+        let currentEditTeam = '';
+        let currentDutyEditId = '';
+        let userRole = '';
+
+        // Handle Login Button Click
+        document.getElementById('loginButton').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Simulated login with role check
+            if (username === 'admin' && password === 'admin') {
+                userRole = 'admin';
+            } else if (username === 'supervisor' && password === 'supervisor') {
+                userRole = 'supervisor';
+            } else if (username === 'operator' && password === 'operator') {
+                userRole = 'operator';
+            } else {
+                document.getElementById('loginMessage').innerText = 'Invalid username or password.';
+                return;
+            }
+             // Show restricted header and footer
+            document.getElementById('restrictedHeader').style.display = 'block';
+            document.getElementById('restrictedFooter').style.display = 'block';
+            
+            document.getElementById('loginHeader').style.display = 'none';
+            document.getElementById('loginDiv').style.display = 'none';
+            document.getElementById('tablesDiv').style.display = 'block';
+
+            // Set permissions based on user role
+            const inputContainers = document.querySelectorAll('.inputContainer');
+            const actionCols = document.querySelectorAll('.actionCol');
+
+            if (userRole === 'admin') {
+                // Admin has full access
+                inputContainers.forEach(container => {
+                    container.style.display = 'flex'; // Show all input containers
+                });
+                actionCols.forEach(col => {
+                    col.style.display = ''; // Show all action columns
+                });
+            } else if (userRole === 'supervisor' || userRole === 'operator') {
+                // Hide input fields and actions for all tables except the comment table
+                inputContainers.forEach((container, index) => { 
+                    if (index < 13) {
+                        container.style.display = 'none'; // Hide input containers for non-comment tables
+                    }
+                });
+                
+                actionCols.forEach((col, index) => {
+                    if (index < 13) {
+                        col.style.display = 'none'; // Hide action columns for non-comment tables
+                    }
+                });
+                
+                // Hide comment controls for operator
+                if (userRole === 'operator') {
+                    const commentInputContainer = document.querySelector('#commentView .inputContainer');
+                    commentInputContainer.style.display = 'none'; // Hide comment input controls
+
+                    const commentActionCols = document.querySelectorAll('#commentTable .actionCol');
+                    commentActionCols.forEach(col => {
+                        col.style.display = 'none'; // Hide action columns for comment table
+                    });
+                }
+
+                // Show comment controls for supervisor
+                if (userRole === 'supervisor') {
+                    const commentInputContainer = document.querySelector('#commentView .inputContainer');
+                    commentInputContainer.style.display = 'flex'; // Show comment input controls
+
+                    const commentActionCols = document.querySelectorAll('#commentTable .actionCol');
+                    commentActionCols.forEach(col => {
+                        col.style.display = ''; // Show action columns for comment table
+                    });
+                }
+            }
+
+            // Show weekly duty inputs for admin only
+            if (userRole === 'admin') {
+                const dutyInputContainer = document.getElementById('dutyInputContainer');
+                dutyInputContainer.style.display = 'flex'; // Show input controls for weekly duty
+            }
+
+            // Load members and duties
+            ['teamA1', 'teamA2', 'teamB1', 'teamB2', 'team1', 'team2', 'team3', 'team4'].forEach(team => loadMembersForTeam(team));
+            loadDuties();
+            loadComments();
+        });
+
+        const loadMembersForTeam = (team) => {
+            onSnapshot(collection(db, team), snapshot => {
+                const members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderMembers(members, team);
+            });
+        };
+
+        const renderMembers = (members, team) => {
+            const tbody = document.getElementById(`members${team.charAt(0).toUpperCase() + team.slice(1)}`);
+            tbody.innerHTML = '';
+            members.forEach((member, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${member.rank}</td>
+                    <td>${member.firstName}</td>
+                    <td>${member.lastName}</td>
+                    <td>${member.remark || ''}</td>
+                    <td>${member.comment || ''}</td>
+                    <td class="actionCol" style="${userRole === 'operator' || userRole === 'supervisor' ? 'display:none;' : ''}">
+                        <button class="editButton" data-id="${member.id}" data-team="${team}"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="deleteButton" data-id="${member.id}" data-team="${team}"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+
+        // Add Team Members
+        const addTeamMember = async (team) => {
+            const memberData = {
+                rank: document.getElementById(`${team}Rank`).value,
+                firstName: document.getElementById(`${team}FirstName`).value,
+                lastName: document.getElementById(`${team}LastName`).value,
+                remark: document.getElementById(`${team}Remark`).value,
+                comment: document.getElementById(`${team}Comment`).value,
+            };
+
+            if (userRole === 'admin' && memberData.rank && memberData.firstName && memberData.lastName) {
+                await addDoc(collection(db, team), memberData);
+                clearFields(team);
+            } else {
+                alert('You do not have permission to add members or please fill in all required fields.');
+            }
+        };
+
+        // Team buttons event listeners
+        const teamButtons = [
+            ['teamA1', 'addTeamA1Btn'],
+            ['teamA2', 'addTeamA2Btn'],
+            ['teamB1', 'addTeamB1Btn'],
+            ['teamB2', 'addTeamB2Btn'],
+            ['team1', 'addTeam1Btn'],
+            ['team2', 'addTeam2Btn'],
+            ['team3', 'addTeam3Btn'],
+            ['team4', 'addTeam4Btn']
+        ];
+
+        teamButtons.forEach(([team, buttonId]) => {
+            document.getElementById(buttonId).addEventListener('click', () => addTeamMember(team));
+        });
+
+        function clearFields(team) {
+            document.getElementById(`${team}Rank`).value = '';
+            document.getElementById(`${team}FirstName`).value = '';
+            document.getElementById(`${team}LastName`).value = '';
+            document.getElementById(`${team}Remark`).value = '';
+            document.getElementById(`${team}Comment`).value = '';
+        }
+
+        document.getElementById('tablesDiv').addEventListener('click', async (event) => {
+            const target = event.target;
+            const team = target.getAttribute('data-team');
+
+            if (target.classList.contains('deleteButton')) {
+                const id = target.getAttribute('data-id');
+                if (confirm("Are you sure you want to delete this entry?")) {
+                    await deleteDoc(doc(db, team, id));
+                }
+            } else if (target.classList.contains('editButton')) {
+                const id = target.getAttribute('data-id');
+                const docRef = doc(db, team, id);
+                const docSnap = await getDoc(docRef);
+                const member = docSnap.data();
+
+                document.getElementById('editRank').value = member.rank;
+                document.getElementById('editFirstName').value = member.firstName;
+                document.getElementById('editLastName').value = member.lastName;
+                document.getElementById('editRemark').value = member.remark || '';
+                document.getElementById('editComment').value = member.comment || '';
+
+                currentEditId = id;
+                currentEditTeam = team;
+                document.getElementById('editModal').style.display = 'block';
+            }
+        });
+
+        // Save changes for team members
+        document.getElementById('saveEditBtn').addEventListener('click', async () => {
+            if (currentEditId) {
+                const updatedData = {
+                    rank: document.getElementById('editRank').value,
+                    firstName: document.getElementById('editFirstName').value,
+                    lastName: document.getElementById('editLastName').value,
+                    remark: document.getElementById('editRemark').value,
+                    comment: document.getElementById('editComment').value,
+                };
+
+                await updateDoc(doc(db, currentEditTeam, currentEditId), updatedData);
+                clearEditFields();
+                document.getElementById('editModal').style.display = 'none';
+            }
+        });
+
+        function clearEditFields() {
+            document.getElementById('editRank').value = '';
+            document.getElementById('editFirstName').value = '';
+            document.getElementById('editLastName').value = '';
+            document.getElementById('editRemark').value = '';
+            document.getElementById('editComment').value = '';
+        }
+
+        document.getElementById('closeEditModal').onclick = function () {
+            document.getElementById('editModal').style.display = 'none';
+        };
+
+        // WEEKLY DUTY MANAGEMENT
+
+        // Load duty entries
+        function loadDuties() {
+            onSnapshot(collection(db, "duties"), snapshot => {
+                const duties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDuties(duties);
+            });
+        }
+
+        // Render Duty Entries
+        function renderDuties(duties) {
+            const tbody = document.getElementById('dutyList');
+            tbody.innerHTML = ''; // Clear existing entries
+            duties.forEach((duty, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${duty.weekDay}</td>
+                    <td>${new Date(duty.date).toLocaleDateString()}</td>
+                    <td>${duty.dayShift}</td>
+                    <td>${duty.nightShift}</td>
+                    <td>${duty.offDuty}</td>
+                    <td class="actionCol" style="${(userRole === 'supervisor' || userRole === 'operator') ? 'display:none;' : ''}">
+                        <button class="editButton" data-id="${duty.id}"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="deleteButton" data-id="${duty.id}"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add Duty Entry
+        document.getElementById('addDutyBtn').addEventListener('click', async () => {
+            const dutyData = {
+                weekDay: document.getElementById('weekDay').value,
+                date: document.getElementById('date').value,
+                dayShift: document.getElementById('dayShift').value,
+                nightShift: document.getElementById('nightShift').value,
+                offDuty: document.getElementById('offDuty').value,
+            };
+
+            if (userRole === 'admin' && dutyData.weekDay && dutyData.date && dutyData.dayShift) {
+                if (currentDutyEditId) {
+                    // Update existing duty entry
+                    await updateDoc(doc(db, 'duties', currentDutyEditId), dutyData);
+                    clearDutyFields();
+                    currentDutyEditId = ''; // Reset for future additions
+                    document.getElementById('addDutyBtn').innerText = 'Add'; // Reset button text
+                } else {
+                    // Add new duty entry
+                    await addDoc(collection(db, 'duties'), dutyData);
+                    clearDutyFields();
+                }
+                loadDuties(); // Refresh the duty list
+            } else {
+                alert('You do not have permission to add duties or please fill in all required fields.');
+            }
+        });
+
+        function clearDutyFields() {
+            document.getElementById('weekDay').value = '';
+            document.getElementById('date').value = '';
+            document.getElementById('dayShift').value = '';
+            document.getElementById('nightShift').value = '';
+            document.getElementById('offDuty').value = '';
+        }
+
+        // Event delegation for handling edit and delete buttons for duties
+        document.getElementById('dutyList').addEventListener('click', async (event) => {
+            const target = event.target.closest('button');
+            if (target) {
+                const id = target.getAttribute('data-id');
+                if (target.classList.contains('deleteButton')) {
+                    if (confirm("Are you sure you want to delete this duty record?")) {
+                        await deleteDoc(doc(db, 'duties', id));
+                    }
+                } else if (target.classList.contains('editButton')) {
+                    const docRef = doc(db, 'duties', id);
+                    const docSnap = await getDoc(docRef);
+                    const duty = docSnap.data();
+
+                    document.getElementById('weekDay').value = duty.weekDay;
+                    document.getElementById('date').value = duty.date;
+                    document.getElementById('dayShift').value = duty.dayShift;
+                    document.getElementById('nightShift').value = duty.nightShift;
+                    document.getElementById('offDuty').value = duty.offDuty;
+
+                    currentDutyEditId = id; // Track the current duty ID for editing
+                    document.getElementById('addDutyBtn').innerText = 'Update'; // Change Add Button to Update
+                }
+            }
+        });
+
+        // COMMENT VIEW MANAGEMENT
+
+        // Load comments
+        function loadComments() {
+            onSnapshot(collection(db, "comments"), snapshot => {
+                const comments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderComments(comments);
+            });
+        }
+
+        // Render Comment Entries
+        function renderComments(comments) {
+            const tbody = document.getElementById('commentList');
+            tbody.innerHTML = ''; // Clear existing comments
+            comments.forEach((comment, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${comment.comment}</td>
+                    <td>${comment.writtenBy}</td>
+                    <td class="actionCol" style="${(userRole === 'operator') ? 'display:none;' : ''}">
+                        <button class="editButton" data-id="${comment.id}" style="${(userRole === 'admin' || userRole === 'supervisor') ? '' : 'display:none;'}"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="deleteButton" data-id="${comment.id}" style="${(userRole === 'admin' || userRole === 'supervisor') ? '' : 'display:none;'}"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add Comment Entry
+        document.getElementById('addCommentBtn').addEventListener('click', async () => {
+            const commentData = {
+                comment: document.getElementById('comment').value,
+                writtenBy: document.getElementById('writtenBy').value,
+            };
+
+            if ((userRole === 'admin' || userRole === 'supervisor') && commentData.comment && commentData.writtenBy) {
+                await addDoc(collection(db, 'comments'), commentData);
+                clearCommentFields();
+            } else {
+                alert('You do not have permission to add comments or please fill in all required fields.');
+            }
+        });
+
+        function clearCommentFields() {
+            document.getElementById('comment').value = '';
+            document.getElementById('writtenBy').value = '';
+        }
+
+        // Event delegation for handling edit and delete buttons for comments
+        document.getElementById('commentView').addEventListener('click', async (event) => {
+            if (event.target.classList.contains('deleteButton')) {
+                const id = event.target.getAttribute('data-id');
+                if (confirm("Are you sure you want to delete this comment?")) {
+                    await deleteDoc(doc(db, 'comments', id));
+                }
+            }
+
+            if (event.target.classList.contains('editButton')) {
+                const id = event.target.getAttribute('data-id');
+                const docRef = doc(db, 'comments', id);
+                const docSnap = await getDoc(docRef);
+                const comment = docSnap.data();
+
+                document.getElementById('editComment').value = comment.comment;
+                document.getElementById('editWrittenBy').value = comment.writtenBy;
+
+                currentEditId = id;
+                document.getElementById('editCommentModal').style.display = 'block';
+            }
+        });
+
+        // Save changes for comments
+        document.getElementById('saveCommentEditBtn').addEventListener('click', async () => {
+            if (currentEditId) {
+                const updatedData = {
+                    comment: document.getElementById('editComment').value,
+                    writtenBy: document.getElementById('editWrittenBy').value,
+                };
+
+                await updateDoc(doc(db, 'comments', currentEditId), updatedData);
+                clearCommentEditFields();
+                document.getElementById('editCommentModal').style.display = 'none';
+            }
+        });
+
+        function clearCommentEditFields() {
+            document.getElementById('editComment').value = '';
+            document.getElementById('editWrittenBy').value = '';
+        }
+
+        // Close modal when clicking on X for comments
+        document.getElementById('closeCommentEditModal').onclick = function () {
+            document.getElementById('editCommentModal').style.display = 'none';
+        };
+
+        // Load duties and comments initially
+        loadDuties();
+        loadComments();
+    </script>
+    <p>
+        You can visit the Team Shift page by clicking the link below:
+        <a href="https://fafa-sudo.github.io/TEAM/shift" target="_blank">Click here to visit the Team Shift page</a>.
+    </p>
+</body>
+</body>
+
+</html>
