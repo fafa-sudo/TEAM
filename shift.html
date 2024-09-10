@@ -132,14 +132,26 @@
             color: black;
             cursor: pointer;
         }
+                #mainHeader {
+            background-color: white;
+            color: black;
+            text-align: center;
+            padding: 20px;
+        }
+        #mainHeader h1 {
+            font-size: 2em; /* Increase font size */
+            font-weight: bold; /* Make text bold */
+        }
         .clock {
-            font-size: 10em; /* Increase font size for the clock */
-            font-weight: bold; /* Make clock text bold */
+            font-size: 3em; /* Increase font size for the clock */
             text-align: center; /* Center the clock text */
-            background-color: black; /* Set background color */
-            color: white; /* Set text color */
-            padding: 10px; /* Add padding for better appearance */
-            display: inline-block; /* Ensure the background color wraps around the text */uto; /* Center the clock div */
+            margin: 0 auto; /* Center the clock div */
+        }
+        /* Alternatively, using Flexbox */
+        #mainHeader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
