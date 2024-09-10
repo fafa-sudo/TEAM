@@ -132,6 +132,11 @@
             color: black;
             cursor: pointer;
         }
+        }
+        .clock {
+            font-size: 60px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -147,8 +152,9 @@
         <p id="loginMessage" class="errorMessage"></p>
     </div>
 
-    <div id="mainHeader">
+   <div id="mainHeader">
         <h1>Operators On Duty</h1>
+        <div class="clock" id="clock"></div> <!-- Clock placed inside mainHeader -->
     </div>
 
     <div id="tablesDiv" style="display:none;">
@@ -363,6 +369,18 @@
          currentEditId ="";
          document.getElementById('editModal').style.display='none';
      };
+        function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');  // Ensures two digits
+        const minutes = String(now.getMinutes()).padStart(2, '0'); // Ensures two digits
+        const seconds = String(now.getSeconds()).padStart(2, '0'); // Ensures two digits
+        const timeString = `${hours}:${minutes}:${seconds}`;
+        
+        document.getElementById('clock').textContent = timeString; // Display the time
+    }
+
+    setInterval(updateTime, 1000); // Update the time every second
+    updateTime(); // Initial call to display the time immediately
     </script>
 
 </body>
