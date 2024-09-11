@@ -122,34 +122,19 @@
             color: black;
             cursor: pointer;
         }
-        #clock {
-            font-weight: bold;
-            font-size: 1.3em; /* Increase font size for the clock */
-            margin: 0 auto; /* Center the clock div */
-            color: white;
-            background-color: black;
-            padding: 8px; /* Add padding for better appearance */
-            font-weight: bold; /* Bold the clock text */
+       #mainHeader {
+            margin-bottom: 20px;
+            text-align: center; /* Center the text in the mainHeader */
         }
-       
-        .mainHeader {
-          background-color: #664f6c;
-            padding: 20px;
-            border-radius: 10px;
-            color: rgb(11, 203, 228);
-            justify-content: space-between;
-            align-items: center;
-            margin: 5px; /* Remove default margin */
-           font-size: 3em;
-           font-weight: bold;
-           display: none;
-           justify-content: center; /* Center horizontally */
-            gap: 10px; /* Space between items */
-           
+        .clock {
+            font-size: 36px; /* Increased font size */
+            font-weight: bold; /* Bold text */
+            margin-top: 10px; /* Margin above the clock for spacing */
         }
-        #text {
-            font-size: 50px; /* Adjust font size */
-            font-weight: bold; /* Bold the text */
+        .centered-text {
+            text-align: center; /* Center text inside the element */
+            margin: 0; /* Remove default margin */
+            font-size: 48px; /* Adjust font size */
         }
         
     </style>
@@ -167,10 +152,10 @@
         <p id="loginMessage" class="errorMessage"></p>
     </div>
 
-   <div class="mainHeader">
-    <div id="text" >OPERATORS ON DUTY</div>
-    <div class="clock" id="clock">my watch</div> <!-- Clock placed inside mainHeader -->
-</div>
+  <div id="mainHeader">
+        <h1 class="centered-text">Operators On Duty</h1> <!-- Apply the centered-text class -->
+        <div class="clock" id="clock"></div> <!-- Clock placed inside mainHeader -->
+    </div>
 
     <div id="tablesDiv" style="display:none;">
         <div id="addOperatorContainer" class="inputContainer">
